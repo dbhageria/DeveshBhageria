@@ -1,10 +1,14 @@
-- 👋 Hi, I’m @DeveshBhageria
-- 👀 I’m interested in Coding , Learning new tech and Music.
-- 🌱 I’m currently learning DevOps.
-- 💞️ I’m looking to collaborate on projects after some learning.
-- 📫 How to reach me @Linkedin- https://www.linkedin.com/in/deveshbhageria or @Twitter- https://twitter.com/BhageriaDevesh or @Mail- bhageriadevesh@gmail.com
+# Devesh Bhageria
 
-<!---
-DeveshBhageria/DeveshBhageria is a ✨ special ✨ repository because its `README.md` (this file) appears on your GitHub profile.
-You can click the Preview link to take a look at your changes.
---->
+Founder @ [AI Cartel](https://aicartel.au) — AI systems for Australian businesses.
+
+**Built & live:**
+- ARIA — AI voice receptionist (Vapi + ElevenLabs + Make.com) — handles inbound calls 24/7, qualifies leads, logs to CRM
+- Lead ops pipeline — form → AI email 10min → WhatsApp 24hr → booking pre-brief (n8n + Cal.com)
+- Claude API content engine — proposals, SEO pipeline, LinkedIn publishing from webhook trigger
+- FastAPI backend with OAuth + RBAC (multi-tenant)
+
+**Stack:** Claude API · Python · n8n · Make.com · Vapi · ElevenLabs · FastAPI · Vercel · GitHub Actions · Power Automate
+
+**MBIS Cybersecurity** · AIH Melbourne  
+📍 Melbourne, VIC · [aicartel.au](https://aicartel.au)
