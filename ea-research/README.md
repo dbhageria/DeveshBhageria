@@ -20,7 +20,7 @@
 | C. NY *closes* ≥ $60 in London's direction | 5% (1/20) | – |
 | D. NY closes in London's direction at all | 60% (12/20) | 50% |
 | E. Price gets $60 past the **London open** during NY | **85%** (17/20) | – |
-| F. +$60 reached before −$30 (from NY open) | 45% (9/20) | – |
+| F. +$60 reached before −$30 (from NY open) | 15% (3/20) | – |
 
 95% confidence intervals are wide at n = 20 (e.g. A: 8–42%, D: 39–78%, E: 64–95%).
 

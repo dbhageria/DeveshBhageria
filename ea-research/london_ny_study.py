@@ -79,16 +79,17 @@ def build_days(df):
 
 
 def simulate(day, sl, tp):
-    """Enter at NY open in London's direction. SL checked before TP inside a bar (conservative)."""
+    """Enter at NY open in London's direction. SL checked before TP inside a bar (conservative).
+    Returns (pnl, exit) where exit is "sl", "tp" or "close"."""
     bars, d, entry = day.ny_bars, day.dir, day.n_open
     for o, h, l, c in bars:
         adverse = (entry - l) if d > 0 else (h - entry)
         favour = (h - entry) if d > 0 else (entry - l)
         if adverse >= sl:
-            return -sl - SPREAD
+            return -sl - SPREAD, "sl"
         if favour >= tp:
-            return tp - SPREAD
-    return (bars[-1][3] - entry) * d - SPREAD
+            return tp - SPREAD, "tp"
+    return (bars[-1][3] - entry) * d - SPREAD, "close"
 
 
 def main(path):
@@ -109,7 +110,7 @@ def main(path):
     print("D. NY closes in London direction at all (> $0):          ", pct((sig.ny_net > 0).sum(), n_sig))
     print("E. Price reaches $60 beyond London OPEN during NY:       ", pct((sig.day_with >= NY_TARGET).sum(), n_sig))
     print("F. NY hits +$60 with London dir BEFORE -$30 against:     ",
-          pct(sum(simulate(r, 30, 60) > 0 for r in sig.itertuples()), n_sig))
+          pct(sum(simulate(r, 30, 60)[1] == "tp" for r in sig.itertuples()), n_sig))
 
     print("\n== Baseline (ALL days, direction = London's sign, no $30 filter) ==")
     print("A. NY touches +$60 in London direction:                  ", pct((days.ny_with >= NY_TARGET).sum(), n_all))
@@ -127,7 +128,7 @@ def main(path):
     print(f"(cost ${SPREAD} per trade, SL checked first when both hit in one 5m bar, flat at NY 17:00)")
     print(f"{'SL':>4} {'TP':>4} {'trades':>6} {'win%':>6} {'avg $':>7} {'total $':>8} {'PF':>5} {'maxDD $':>8}")
     for sl, tp in [(20, 60), (30, 60), (40, 60), (60, 60), (30, 30), (30, 45), (40, 80), (1e9, 60), (1e9, 1e9)]:
-        pnl = np.array([simulate(r, sl, tp) for r in sig.itertuples()])
+        pnl = np.array([simulate(r, sl, tp)[0] for r in sig.itertuples()])
         eq = pnl.cumsum()
         dd = (np.maximum.accumulate(np.r_[0, eq]) - np.r_[0, eq]).max()
         gp, gl = pnl[pnl > 0].sum(), -pnl[pnl < 0].sum()
