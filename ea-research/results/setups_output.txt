@@ -1,0 +1,86 @@
+
+=========== 1 pullback ===========
+ tf      setup                                 variant     n  per_yr    win  med_rr    PF   avgR  2011-18  2019-22  2023-26  ci_lo  ci_hi
+M15 1 pullback    HTF H1, stop +0.1ATR, swing, minRR 0  4438 280.886 35.219   1.318 0.594 -0.275   -0.307   -0.304   -0.168 -0.310 -0.239
+M15 1 pullback    HTF H1, stop +0.1ATR, swing, minRR 3   571  36.139 16.462   3.798 0.738 -0.234   -0.303   -0.405    0.042 -0.392 -0.071
+M15 1 pullback    HTF H1, stop +0.1ATR, swing, minRR 4   242  15.316 14.876   4.935 0.818 -0.167   -0.381   -0.176    0.199 -0.444  0.131
+M15 1 pullback HTF H1, stop +0.1ATR, measured, minRR 0  4283 271.076 28.905   2.142 0.704 -0.221   -0.231   -0.267   -0.146 -0.266 -0.174
+M15 1 pullback HTF H1, stop +0.1ATR, measured, minRR 3  1447  91.582 14.927   4.204 0.732 -0.243   -0.291   -0.300   -0.092 -0.347 -0.135
+M15 1 pullback HTF H1, stop +0.1ATR, measured, minRR 4   812  51.392 13.547   5.193 0.811 -0.174   -0.249   -0.168   -0.039 -0.329 -0.013
+M15 1 pullback      HTF H1, stop +1ATR, swing, minRR 0  4094 259.114 50.953   0.726 0.692 -0.154   -0.161   -0.201   -0.088 -0.183 -0.126
+M15 1 pullback      HTF H1, stop +1ATR, swing, minRR 3    20   1.266 25.000   3.576 1.186  0.144   -0.112   -1.030    2.013 -0.622  1.113
+M15 1 pullback      HTF H1, stop +1ATR, swing, minRR 4     5   0.316 20.000   4.577 1.210  0.176   -1.046   -1.054    5.070 -1.056  2.623
+M15 1 pullback   HTF H1, stop +1ATR, measured, minRR 0  3804 240.759 42.403   1.195 0.781 -0.129   -0.117   -0.201   -0.080 -0.165 -0.093
+M15 1 pullback   HTF H1, stop +1ATR, measured, minRR 3   146   9.241 20.548   3.542 0.908 -0.075   -0.077   -0.146   -0.006 -0.379  0.246
+M15 1 pullback   HTF H1, stop +1ATR, measured, minRR 4    36   2.278 13.889   4.466 0.741 -0.228   -0.378   -0.455    0.305 -0.864  0.450
+M15 1 pullback    HTF H4, stop +0.1ATR, swing, minRR 0  4151 262.722 35.943   1.302 0.607 -0.264   -0.295   -0.267   -0.185 -0.299 -0.227
+M15 1 pullback    HTF H4, stop +0.1ATR, swing, minRR 3   512  32.405 16.016   3.776 0.690 -0.280   -0.296   -0.460   -0.020 -0.439 -0.117
+M15 1 pullback    HTF H4, stop +0.1ATR, swing, minRR 4   204  12.911 12.255   4.982 0.646 -0.338   -0.461   -0.410    0.039 -0.615 -0.049
+M15 1 pullback HTF H4, stop +0.1ATR, measured, minRR 0  3991 252.595 29.216   2.118 0.699 -0.224   -0.236   -0.242   -0.176 -0.271 -0.176
+M15 1 pullback HTF H4, stop +0.1ATR, measured, minRR 3  1305  82.595 14.789   4.132 0.705 -0.270   -0.327   -0.243   -0.161 -0.378 -0.158
+M15 1 pullback HTF H4, stop +0.1ATR, measured, minRR 4   719  45.506 12.796   5.138 0.732 -0.252   -0.265   -0.278   -0.194 -0.416 -0.084
+M15 1 pullback      HTF H4, stop +1ATR, swing, minRR 0  3837 242.848 51.446   0.715 0.693 -0.153   -0.168   -0.167   -0.101 -0.182 -0.123
+M15 1 pullback      HTF H4, stop +1ATR, swing, minRR 3    17   1.076 11.765   3.511 0.430 -0.518   -0.623   -1.028    0.510 -1.034  0.240
+M15 1 pullback      HTF H4, stop +1ATR, swing, minRR 4     2   0.127  0.000   4.522 0.000 -1.050   -1.064      NaN   -1.035 -1.064 -1.035
+M15 1 pullback   HTF H4, stop +1ATR, measured, minRR 0  3549 224.620 42.829   1.173 0.775 -0.132   -0.136   -0.171   -0.079 -0.170 -0.095
+M15 1 pullback   HTF H4, stop +1ATR, measured, minRR 3   123   7.785 18.699   3.515 0.774 -0.190   -0.253   -0.429    0.236 -0.488  0.132
+M15 1 pullback   HTF H4, stop +1ATR, measured, minRR 4    27   1.709  7.407   4.432 0.329 -0.639   -0.693   -1.028   -0.172 -1.032 -0.049
+ M5 1 pullback    HTF H1, stop +0.1ATR, swing, minRR 0 13388 847.342 31.215   1.210 0.415 -0.435   -0.514   -0.408   -0.286 -0.454 -0.417
+ M5 1 pullback    HTF H1, stop +0.1ATR, swing, minRR 3  1638 103.671  8.425   3.922 0.306 -0.742   -0.807   -0.758   -0.553 -0.814 -0.667
+ M5 1 pullback    HTF H1, stop +0.1ATR, swing, minRR 4   772  48.861  6.995   4.984 0.303 -0.771   -0.869   -0.754   -0.492 -0.880 -0.659
+ M5 1 pullback HTF H1, stop +0.1ATR, measured, minRR 0 12975 821.203 25.033   1.974 0.482 -0.423   -0.509   -0.392   -0.257 -0.446 -0.401
+ M5 1 pullback HTF H1, stop +0.1ATR, measured, minRR 3  3896 246.582 10.832   4.231 0.448 -0.556   -0.659   -0.518   -0.336 -0.610 -0.501
+ M5 1 pullback HTF H1, stop +0.1ATR, measured, minRR 4  2256 142.785  8.466   5.271 0.415 -0.618   -0.727   -0.566   -0.379 -0.695 -0.540
+ M5 1 pullback      HTF H1, stop +1ATR, swing, minRR 0 12185 771.203 47.000   0.689 0.536 -0.254   -0.311   -0.234   -0.150 -0.270 -0.238
+ M5 1 pullback      HTF H1, stop +1ATR, swing, minRR 3    55   3.481 10.909   3.452 0.386 -0.603   -0.610   -0.640   -0.531 -0.950 -0.193
+ M5 1 pullback      HTF H1, stop +1ATR, swing, minRR 4    16   1.013 12.500   4.758 0.465 -0.575   -0.491   -1.044   -1.283 -1.283  0.411
+ M5 1 pullback   HTF H1, stop +1ATR, measured, minRR 0 11200 708.861 39.098   1.137 0.624 -0.240   -0.291   -0.236   -0.129 -0.261 -0.220
+ M5 1 pullback   HTF H1, stop +1ATR, measured, minRR 3   429  27.152 17.249   3.517 0.691 -0.273   -0.273   -0.303   -0.238 -0.438 -0.103
+ M5 1 pullback   HTF H1, stop +1ATR, measured, minRR 4   119   7.532 10.924   4.551 0.517 -0.471   -0.479   -0.390   -0.530 -0.776 -0.130
+ M5 1 pullback    HTF H4, stop +0.1ATR, swing, minRR 0 12937 818.797 31.576   1.187 0.409 -0.436   -0.507   -0.426   -0.283 -0.454 -0.418
+ M5 1 pullback    HTF H4, stop +0.1ATR, swing, minRR 3  1526  96.582  8.060   3.889 0.295 -0.754   -0.822   -0.724   -0.571 -0.824 -0.681
+ M5 1 pullback    HTF H4, stop +0.1ATR, swing, minRR 4   709  44.873  6.488   5.003 0.281 -0.810   -0.928   -0.741   -0.448 -0.919 -0.691
+ M5 1 pullback HTF H4, stop +0.1ATR, measured, minRR 0 12599 797.405 25.494   1.939 0.471 -0.429   -0.496   -0.430   -0.272 -0.452 -0.406
+ M5 1 pullback HTF H4, stop +0.1ATR, measured, minRR 3  3664 231.899 10.071   4.219 0.411 -0.598   -0.676   -0.629   -0.347 -0.651 -0.543
+ M5 1 pullback HTF H4, stop +0.1ATR, measured, minRR 4  2103 133.101  7.608   5.277 0.372 -0.670   -0.757   -0.676   -0.393 -0.742 -0.594
+ M5 1 pullback      HTF H4, stop +1ATR, swing, minRR 0 11754 743.924 47.303   0.672 0.534 -0.253   -0.298   -0.246   -0.159 -0.269 -0.237
+ M5 1 pullback      HTF H4, stop +1ATR, swing, minRR 3    57   3.608 12.281   3.451 0.451 -0.537   -0.643   -0.765    0.927 -0.910 -0.109
+ M5 1 pullback      HTF H4, stop +1ATR, swing, minRR 4    19   1.203 15.789   4.527 0.633 -0.375   -0.495   -1.065    1.503 -1.187  0.525
+ M5 1 pullback   HTF H4, stop +1ATR, measured, minRR 0 10860 687.342 39.715   1.112 0.625 -0.237   -0.267   -0.253   -0.151 -0.257 -0.216
+ M5 1 pullback   HTF H4, stop +1ATR, measured, minRR 3   397  25.127 19.395   3.490 0.779 -0.191   -0.280   -0.218    0.148 -0.366 -0.008
+ M5 1 pullback   HTF H4, stop +1ATR, measured, minRR 4   111   7.025  9.910   4.461 0.463 -0.534   -0.631   -0.574   -0.156 -0.831 -0.198
+
+=========== 2 BOS+retest ===========
+ tf        setup          variant     n   per_yr    win  med_rr    PF   avgR  2011-18  2019-22  2023-26  ci_lo  ci_hi
+M15 2 BOS+retest target liquidity  5893  372.975 20.787   4.851 0.648 -0.292   -0.315   -0.275   -0.264 -0.349 -0.232
+M15 2 BOS+retest        target 5R  5393  341.329 13.536   5.000 0.740 -0.236   -0.284   -0.220   -0.158 -0.290 -0.183
+ M5 2 BOS+retest target liquidity 18092 1145.063 18.903   4.099 0.469 -0.465   -0.537   -0.468   -0.319 -0.492 -0.437
+ M5 2 BOS+retest        target 5R 16479 1042.975 10.656   5.000 0.545 -0.440   -0.503   -0.423   -0.330 -0.468 -0.411
+
+=========== 3 sweep+FVG ===========
+ tf       setup          variant   n  per_yr    win  med_rr    PF   avgR  2011-18  2019-22  2023-26  ci_lo  ci_hi
+M15 3 sweep+FVG target liquidity 599  37.911 39.733   1.420 0.702 -0.183   -0.193   -0.109   -0.246 -0.278 -0.089
+M15 3 sweep+FVG        target 5R 551  34.873 12.160   5.000 0.674 -0.292   -0.347   -0.281   -0.196 -0.447 -0.128
+ M5 3 sweep+FVG target liquidity 551  34.873 27.949   2.595 0.704 -0.221   -0.223   -0.165   -0.283 -0.347 -0.094
+ M5 3 sweep+FVG        target 5R 540  34.177 13.889   5.000 0.773 -0.202   -0.258   -0.157   -0.143 -0.371 -0.022
+
+=========== 4 breakout ===========
+ tf      setup                                  variant    n  per_yr    win  med_rr    PF   avgR  2011-18  2019-22  2023-26  ci_lo  ci_hi
+M15 4 breakout          asia range, stop mid, target 1x 2905 183.861 41.343   1.444 0.889 -0.066   -0.073   -0.113    0.005 -0.109 -0.025
+M15 4 breakout          asia range, stop mid, target 2x 2488 157.468 25.603   3.058 0.927 -0.055   -0.051   -0.160    0.069 -0.121  0.011
+M15 4 breakout     asia range, stop opposite, target 1x 2655 168.038 58.230   0.796 1.005  0.002    0.019   -0.036    0.006 -0.031  0.035
+M15 4 breakout     asia range, stop opposite, target 2x 1977 125.127 38.796   1.682 0.976 -0.015   -0.003   -0.101    0.056 -0.069  0.041
+M15 4 breakout      london1h range, stop mid, target 1x 3656 231.392 45.213   1.112 0.754 -0.138   -0.124   -0.124   -0.182 -0.172 -0.105
+M15 4 breakout      london1h range, stop mid, target 2x 3704 234.430 27.457   2.489 0.774 -0.169   -0.154   -0.163   -0.205 -0.217 -0.120
+M15 4 breakout london1h range, stop opposite, target 1x 3629 229.684 60.265   0.652 0.853 -0.059   -0.059   -0.056   -0.064 -0.085 -0.033
+M15 4 breakout london1h range, stop opposite, target 2x 3591 227.278 40.908   1.464 0.889 -0.067   -0.045   -0.094   -0.082 -0.106 -0.027
+ M5 4 breakout          asia range, stop mid, target 1x 3073 194.494 38.659   1.565 0.892 -0.067   -0.055   -0.141   -0.007 -0.110 -0.024
+ M5 4 breakout          asia range, stop mid, target 2x 2590 163.924 23.861   3.267 0.935 -0.051   -0.040   -0.159    0.062 -0.118  0.018
+ M5 4 breakout     asia range, stop opposite, target 1x 2778 175.823 55.688   0.845 0.987 -0.006    0.009   -0.041    0.000 -0.039  0.027
+ M5 4 breakout     asia range, stop opposite, target 2x 2041 129.177 37.335   1.764 0.986 -0.009   -0.006   -0.071    0.054 -0.065  0.048
+ M5 4 breakout      london1h range, stop mid, target 1x 3846 243.418 41.290   1.287 0.759 -0.146   -0.135   -0.115   -0.199 -0.180 -0.111
+ M5 4 breakout      london1h range, stop mid, target 2x 3811 241.203 24.298   2.806 0.778 -0.173   -0.162   -0.139   -0.232 -0.223 -0.123
+ M5 4 breakout london1h range, stop opposite, target 1x 3816 241.519 57.416   0.730 0.863 -0.059   -0.062   -0.049   -0.064 -0.086 -0.033
+ M5 4 breakout london1h range, stop opposite, target 2x 3690 233.544 38.564   1.594 0.904 -0.060   -0.041   -0.080   -0.080 -0.100 -0.021
+
+Settings positive overall: 3 / 72; positive in all three periods: 0 / 72
