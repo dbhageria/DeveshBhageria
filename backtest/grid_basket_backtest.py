@@ -53,7 +53,9 @@ def htf_trend(df, rule, ema_len):
 
 
 def run(df, trend, mode, r, levels, step, tp, sl=None, spread=0.30,
-        start=10.0, cap=1_000_000.0):
+        start=10.0, cap=1_000_000.0, flip_close=False):
+    """flip_close: in HTF modes, close the open basket at the bar open as soon as the
+    HTF trend turns against it, then start a basket in the new direction."""
     o = df["open"].to_numpy(); h = df["high"].to_numpy()
     l = df["low"].to_numpy(); c = df["close"].to_numpy()
     t = df.index.to_numpy()
@@ -63,7 +65,7 @@ def run(df, trend, mode, r, levels, step, tp, sl=None, spread=0.30,
     st = dict(bal=start, d=0, T=0.0, cost=0.0, n=0, last=0.0, acct_start=t[0],
               peak=start, peak_t=t[0], baskets=0, i=0)
     accounts = []          # finished accounts
-    basket_results = []    # +1 win / -1 sl / -2 stopout
+    basket_results = []    # +1 win / -1 sl / -2 stopout / +3,-3 closed on HTF flip
 
     def end_account(i, reason):
         accounts.append(dict(reason=reason, peak=st["peak"], baskets=st["baskets"],
@@ -194,6 +196,12 @@ def run(df, trend, mode, r, levels, step, tp, sl=None, spread=0.30,
         st["i"] = i
         if i > 0 and gap_ns[i - 1] > 5 and st["d"] != 0:
             segment(i, c[i - 1], o[i], True)
+        if flip_close and st["d"] != 0 and trend[i] == -st["d"]:
+            pnl = equity(o[i]) - st["bal"]
+            close_at_pnl(pnl)
+            basket_results.append(3 if pnl > 0 else -3)
+            if st["bal"] < 1.0:
+                end_account(i, "blown")
         if st["d"] == 0:
             dd = want_dir(i)
             if dd != 0:
@@ -234,7 +242,9 @@ def run(df, trend, mode, r, levels, step, tp, sl=None, spread=0.30,
         pct_reach_10k=round(100 * float((peaks >= 10_000).mean()), 2),
         pct_reach_100k=round(100 * float((peaks >= 100_000).mean()), 2),
         best_peak=round(float(peaks.max()), 2),
-        basket_win_rate=round(100 * float((br == 1).mean()), 2) if len(br) else None,
+        basket_win_rate=round(100 * float((br > 0).mean()), 2) if len(br) else None,
+        flip_closes=int((np.abs(br) == 3).sum()),
+        flip_closes_in_profit_pct=round(100 * float((br == 3).sum() / max(1, (np.abs(br) == 3).sum())), 2),
         baskets=int(len(br)),
         live_account=live,
         top_accounts=[dict(start=a["start"], peak_at=a["peak_at"], end=a["end"],

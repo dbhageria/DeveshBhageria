@@ -50,6 +50,19 @@ class BacktestTests(unittest.TestCase):
         expected = 1000 + (1995.5 - half - avg) * sum(lots) * 100
         self.assertAlmostEqual(res["live_account"]["balance"], round(expected, 2), places=2)
 
+    def test_htf_flip_closes_basket_and_reverses(self):
+        # buy basket opens at 2000; HTF turns down on bar 2 -> close buy at 1999.5, open sell
+        df = bars([(2000, 2000, 2000, 2000), (2000, 2000, 1999.5, 1999.5),
+                   (1999.5, 1999.5, 1999.5, 1999.5)])
+        trend = np.array([1.0, 1.0, -1.0])
+        p = dict(r=0.1, levels=1, step=1.0, tp=0.1, spread=SPREAD, start=1000.0)
+        res = g.run(df, trend, "htf_H1", flip_close=True, **p)
+        self.assertEqual(res["flip_closes"], 1)
+        # buy: 1 lot 2000.15 -> 1999.35 = -$80 -> $920; new sell is 0.92 lots, pays $27.60 spread
+        self.assertAlmostEqual(res["live_account"]["balance"], 892.4, places=2)
+        res_off = g.run(df, trend, "htf_H1", flip_close=False, **p)
+        self.assertEqual(res_off["flip_closes"], 0)
+
 
 if __name__ == "__main__":
     unittest.main()

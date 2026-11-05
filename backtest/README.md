@@ -13,7 +13,8 @@ optional higher-timeframe (HTF) trend filter for choosing buy or sell baskets.
 python3 -I grid_basket_backtest.py /path/to/XAUUSD_m1.csv 0.30 1000   # spread, start balance
 python3 -I summarize.py r_s030_1000.jsonl
 ```
-`swing_check.py` runs a slower wide-grid variant. Change the settings in `PROFILES` inside
+`swing_check.py` runs a slower wide-grid variant. `flip_check.py` compares the HTF modes with and
+without `flip_close` (close the basket as soon as the HTF trend turns against it). Change the settings in `PROFILES` inside
 `grid_basket_backtest.py`.
 
 ## Result files
@@ -24,6 +25,7 @@ python3 -I summarize.py r_s030_1000.jsonl
 | `r_s030_10000.jsonl` | $0.30 | $10,000 |
 | `r_s0_1000.jsonl` | $0 | $1,000 |
 | `r_swing.jsonl` | $0.30 | $10,000 (wide-grid variant) |
+| `r_flip.jsonl` | $0.30 | $1,000 ($10,000 for swing); HTF modes, flip-close off vs on |
 
 ## Findings
 - All main-grid runs (`video_like` / `moderate` / `conservative`) lost money overall, including at
@@ -31,6 +33,8 @@ python3 -I summarize.py r_s030_1000.jsonl
 - The wide-grid `swing` variant finished net-positive only in `htf_H4`, and only because one of its
   19 accounts reached the $1M cap (lottery variance, not edge). The other 4 swing modes lost money.
 - The HTF filter (H1/H4 EMA50, D1 EMA20) changed basket win rates by under 1%.
+- Closing the basket when the HTF trend flips changed almost nothing: 75-100% of deposits were
+  still lost in every non-swing run, and most flip-closes were at a loss (12-66% in profit).
 - Starting from $10 with `video_like` settings: about 61,000 accounts blown in 16 months; the best
   reached $18.5k and none reached $100k. With `moderate` settings, one $10 account reached $793k
   before blowing up.
