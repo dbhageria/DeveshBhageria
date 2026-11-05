@@ -61,16 +61,18 @@ def run(df, trend, mode, r, levels, step, tp, sl=None, spread=0.30,
     half = spread / 2.0
 
     st = dict(bal=start, d=0, T=0.0, cost=0.0, n=0, last=0.0, acct_start=t[0],
-              peak=start, baskets=0)
+              peak=start, peak_t=t[0], baskets=0, i=0)
     accounts = []          # finished accounts
     basket_results = []    # +1 win / -1 sl / -2 stopout
 
     def end_account(i, reason):
         accounts.append(dict(reason=reason, peak=st["peak"], baskets=st["baskets"],
                              final=st["bal"] if reason == "cap" else 0.0,
-                             days=(t[i] - st["acct_start"]) / np.timedelta64(1, "D")))
+                             days=(t[i] - st["acct_start"]) / np.timedelta64(1, "D"),
+                             start=str(st["acct_start"])[:16], peak_at=str(st["peak_t"])[:16],
+                             end=str(t[i])[:16]))
         st.update(bal=start, d=0, T=0.0, cost=0.0, n=0, acct_start=t[i],
-                  peak=start, baskets=0)
+                  peak=start, peak_t=t[i], baskets=0)
 
     def avg():
         return st["cost"] / st["T"]
@@ -97,60 +99,80 @@ def run(df, trend, mode, r, levels, step, tp, sl=None, spread=0.30,
         st["bal"] += pnl
         st["d"] = 0; st["T"] = 0.0; st["cost"] = 0.0; st["n"] = 0
         st["baskets"] += 1
-        st["peak"] = max(st["peak"], st["bal"])
+        if st["bal"] > st["peak"]:
+            st["peak"] = st["bal"]; st["peak_t"] = t[st["i"]]
 
     def thresh_price(X):
         # price at which basket pnl == X
         d = st["d"]
         return avg() + d * X / (st["T"] * CONTRACT) + d * half
 
+    def stop_out(i):
+        basket_results.append(-2)
+        st["peak"] = max(st["peak"], st["bal"])
+        end_account(i, "blown")
+
+    def sl_now(i, p):
+        # close at the ACTUAL pnl if the basket is already past its stop-loss at price p
+        # (e.g. after a grid add's spread cost or a gap)
+        if sl is None or st["d"] == 0:
+            return False
+        pnl = equity(p) - st["bal"]
+        if pnl > -sl * st["bal"]:
+            return False
+        close_at_pnl(pnl)
+        basket_results.append(-1)
+        if st["bal"] < 1.0:
+            end_account(i, "blown")
+        return True
+
     def segment(i, a, b, gap):
         d = st["d"]
         if d == 0 or a == b:
             return
         if (b - a) * d < 0:  # adverse move
+            if gap:  # everything happens at the gapped price
+                if equity(b) <= 0:
+                    stop_out(i)
+                    return
+                if sl_now(i, b):
+                    return
+                crossed = int(d * (st["last"] - b) // step)
+                for _ in range(max(0, min(crossed, levels - st["n"]))):
+                    if not add_level(b):
+                        break
+                sl_now(i, b)
+                return
             cur = a
             while st["d"] != 0:
+                if sl_now(i, cur):
+                    return
                 ev = []
                 if st["n"] < levels:
                     g = st["last"] - d * step
-                    if d * g >= d * b and d * g <= d * cur:
+                    if d * b <= d * g <= d * cur:
                         ev.append((d * g, "grid", g))
                 ps = thresh_price(-st["bal"])
-                if d * ps >= d * b:
+                if d * b <= d * ps <= d * cur:
                     ev.append((d * ps, "stop", ps))
                 if sl is not None:
                     pl = thresh_price(-sl * st["bal"])
-                    if d * pl >= d * b:
+                    if d * b <= d * pl < d * cur:
                         ev.append((d * pl, "sl", pl))
                 if not ev:
                     return
                 _, kind, p = max(ev, key=lambda e: (e[0], e[1] != "grid"))
-                if gap:  # everything happens at the gapped price
-                    p = b
-                    eqb = equity(b)
-                    if eqb <= 0:
-                        kind = "stop"
-                    elif sl is not None and eqb - st["bal"] <= -sl * st["bal"]:
-                        kind = "sl"
-                    else:
-                        kind = "grid"
                 if kind == "stop":
-                    basket_results.append(-2)
-                    st["peak"] = max(st["peak"], st["bal"])
-                    end_account(i, "blown")
+                    stop_out(i)
                     return
                 if kind == "sl":
-                    pnl = equity(p) - st["bal"] if gap else -sl * st["bal"]
-                    close_at_pnl(pnl)
+                    close_at_pnl(-sl * st["bal"])
                     basket_results.append(-1)
                     if st["bal"] < 1.0:
                         end_account(i, "blown")
                     return
                 add_level(p)
                 cur = p
-                if gap:
-                    return
         else:  # favourable move
             X = tp * st["bal"]
             p = thresh_price(X)
@@ -169,6 +191,7 @@ def run(df, trend, mode, r, levels, step, tp, sl=None, spread=0.30,
         return int(trend[i])
 
     for i in range(len(o)):
+        st["i"] = i
         if i > 0 and gap_ns[i - 1] > 5 and st["d"] != 0:
             segment(i, c[i - 1], o[i], True)
         if st["d"] == 0:
@@ -185,10 +208,11 @@ def run(df, trend, mode, r, levels, step, tp, sl=None, spread=0.30,
 
     # still-running account
     live = dict(balance=round(equity(c[-1]), 2), peak=round(st["peak"], 2),
+                start=str(st["acct_start"])[:16], peak_at=str(st["peak_t"])[:16],
                 days=round((t[-1] - st["acct_start"]) / np.timedelta64(1, "D"), 1),
                 baskets=st["baskets"])
     acc = pd.DataFrame(accounts) if accounts else pd.DataFrame(
-        columns=["reason", "peak", "baskets", "days", "final"])
+        columns=["reason", "peak", "baskets", "days", "final", "start", "peak_at", "end"])
     blown = acc[acc.reason == "blown"]
     br = np.array(basket_results)
     total_accounts = len(acc) + 1
@@ -213,6 +237,10 @@ def run(df, trend, mode, r, levels, step, tp, sl=None, spread=0.30,
         basket_win_rate=round(100 * float((br == 1).mean()), 2) if len(br) else None,
         baskets=int(len(br)),
         live_account=live,
+        top_accounts=[dict(start=a["start"], peak_at=a["peak_at"], end=a["end"],
+                           peak=round(a["peak"], 2), baskets=int(a["baskets"]),
+                           days=round(a["days"], 2), how_it_ended=a["reason"])
+                      for a in acc.sort_values("peak", ascending=False).head(3).to_dict("records")],
     )
 
 
