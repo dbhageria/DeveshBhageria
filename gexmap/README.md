@@ -18,8 +18,14 @@ chart.
 ## Gold data: CME Daily Bulletin PDFs (free, manual)
 
 Gold levels come from **COMEX gold options on GC futures**: the OG monthlies plus
-every weekly and daily series (Friday `OG1`–`OG5`, Monday `G1M`–`G5M`, Tuesday
-`G1T`–`G5T`, Wednesday `G1W`–`G5W`, Thursday `G1R`–`G5R`). GLD is not used.
+every weekly and daily series. The bulletin prints them as:
+
+* `OG CALL` / `OG PUT`: monthlies
+* `OG1`–`OG5`: Friday weeklies
+* `GMW MON`, `GWT TUE`, `GWW WED`, `GWR THU`: the Monday–Thursday weeklies (02B calls
+  them `G1M`…`G5M`, `G1T`…, `G1W`…, `G1R`…)
+
+Micro gold (OMG, WMG, FMG), 1-ounce, e-mini and event contracts are left out. GLD is not used.
 
 **The code never downloads anything from cmegroup.com.** CME's terms forbid
 automated access, so you download the PDFs yourself.
@@ -32,7 +38,7 @@ CME Daily Bulletin page: <https://www.cmegroup.com/market-data/daily-bulletin.ht
 |---|---|---|
 | **64 – Metal Options** | `daily_bulletin/current/Section64_Metals_Option_Products.pdf` | yes |
 | **62 – Metal Futures** | `daily_bulletin/current/Section62_Metals_Futures_Products.pdf` | yes |
-| 02B – Metals volume / OI summary | `daily_bulletin/current/Section02B_Summary_Volume_And_Open_Interest_Metals_Futures_And_Options.pdf` | optional cross-check |
+| 02B – Metals volume / OI summary | `daily_bulletin/current/Section02B_Summary_Volume_And_Open_Interest_Metals_Futures_And_Options.pdf` | recommended: checks totals and pins the Mon–Thu weeklies |
 
 All three live under `https://www.cmegroup.com/daily_bulletin/current/`. That folder is
 overwritten every trading day, so save each day's files (the parser reads the trade date
@@ -72,22 +78,44 @@ Black-76 delta that doesn't match the bulletin's delta column all stop the run.
 
 ### How the bulletin is turned into a book
 
-* **Trade date**: read from the page header; the newest PDF of each section wins.
-  Sections 62 and 64 must carry the same date.
+* **Trade date**: read from the page header (`Wed, Nov 04, 2026`); the newest PDF of each
+  section wins. Sections 62 and 64 must carry the same date.
+* **Rows**: each strike row ends in the same nine fields: settle, point change, delta,
+  exercises, outcry/Globex/PNT volume, open interest, OI change. They're read from the
+  right, so the bid/ask range columns in the middle don't matter. The printed delta is
+  **unsigned** (puts print positive).
+* **Totals**: every block's `TOTAL` line must equal the open interest parsed from its
+  rows, and the gold options total must be within 2% of Section 02B if it's present.
+  Any mismatch stops the run.
 * **Reference future**: the GC contract with the highest open interest. Every strike
   is converted into its price space: `kref = K * F_ref / F_underlying`.
-* **Expiries**: the bulletin gives contract months, not expiry dates, so they're
-  derived from CME rules. OG expires on the 4th-last business day of the month before
-  the contract month (one day earlier if that's a Friday or the day before a holiday)
-  and exercises into the nearest active GC month (Feb, Apr, Jun, Aug, Oct, Dec).
-  Weeklies expire on the n-th weekday of the month in the block's label, and exercise
-  into the GC month of the next monthly OG.
+* **Expiries and underlyings**:
+  * **OG** expires on the 4th-last business day of the month before the contract month
+    (one day earlier if that's a Friday or the day before a holiday). It exercises into
+    the nearest even-month GC future, so Jan options go into Feb. Both rules are checked
+    against the bulletin's page-1 last-trade-date table and put-call parity.
+  * **`OGn`** expires on the n-th Friday.
+  * **Any weekly expiring after the front OG** exercises into the next GC month
+    (e.g. `OG4` on Nov 27 → GCG7).
+* **Monday–Thursday weeklies**: the bulletin lists every week **and** both calls and puts
+  of an expiry month in one block, with nothing to tell them apart. Each row is placed at
+  the call/put and week whose model price and delta, on the vol surface built from the
+  labelled series (OG, OG1–OG5), are closest to the printed settle and delta. If Section
+  02B is present, its open interest per series (e.g. `G2R C`) is used as a constraint, and
+  the run prints how many contracts the fit alone put elsewhere. That's why 02B is worth
+  downloading too: on 2026-11-04 the fit alone placed 774 of 20,474 weekly contracts
+  differently from 02B; with 02B, 71.
 * **Implied vol**: backed out of each settlement price with Black-76 (`cme_gold.b76_iv`,
-  r = `cme_gold.RATE`). The Black-76 delta is checked against the bulletin's delta
-  column, and the run prints the median absolute difference.
+  r = `cme_gold.RATE`), timed from the trade-date settlement. The Black-76 delta is
+  checked against the bulletin's delta (median absolute difference must be ≤ 0.05; it's
+  about 0.0002).
+* **Strike check**: gold has a long far out-of-the-money call tail (e.g. Dec 15000/20000
+  calls at the 0.10 minimum), so the check uses near-the-money rows (bulletin delta
+  0.2–0.8, expiring within 60 days). They must centre within 5% of the futures price.
+  The book keeps strikes within ±15%.
 * **T**: from the next session (13:30 UTC on `next_session(trade_date)`) to each
   option's 13:30 ET expiry, with a 30-minute floor.
-* **hi / lo**: the reference future's session high/low from Section 62, else its settle.
+* **hi / lo**: the reference future's Globex high/low from Section 62, else its settle.
 
 ### Checking a new PDF layout
 
@@ -95,8 +123,9 @@ Black-76 delta that doesn't match the bulletin's delta column all stop the run.
 python bulletin_gold.py --inspect inbox/
 ```
 
-This prints block titles, every gold series with its derived expiry and GC future, the
-detected column layout, the trade date, and raw rows next to the parsed fields. If CME
+This prints the block titles, the last-trade-date table, open interest per block next to
+its `TOTAL` line, raw rows next to the parsed fields, every series with its expiry and GC
+future, the put-call-parity check, and the weekly classification against 02B. If CME
 changes the layout, run this first.
 
 ## Automatic alternative: Databento
@@ -114,10 +143,17 @@ python -m pytest -q tests
 
 * **Synthetic tests** run on `tests/fixtures/synthetic/*.pdf`, made by
   `tests/fixtures/make_synthetic_bulletin.py`. These are **not CME data**: they're
-  model prices laid out like a bulletin, used to exercise the code end to end.
+  model prices laid out like the real 2026 bulletin (mixed weekly block, TOTAL lines,
+  02B column positions), used to exercise the code end to end. Real CME pages aren't
+  committed because this repository is public.
 * **Real tests** run on your PDFs in `inbox/` or `inbox/done/` (or `$GEXMAP_INBOX`)
-  and are skipped when none are present. They check for more than 500 gold option rows,
-  strikes within ±15% of the futures price, a GC future for every series, a sensible
-  delta match, and total OI within 2% of Section 02B when that PDF is present.
+  and are skipped when none are present. They check:
+  * more than 500 gold option rows, all parsed;
+  * every `TOTAL` line matches its block;
+  * strikes within ±15% of the futures price;
+  * a GC future for every series, with put-call parity agreeing;
+  * the delta match;
+  * total OI within 2% of Section 02B;
+  * the weekly classification against 02B.
 
 `inbox/` and `output/` are git-ignored. Don't commit CME PDFs to a public repo.

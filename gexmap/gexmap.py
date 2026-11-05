@@ -306,7 +306,12 @@ def main(argv=None) -> int:
         if st.get("synthetic"):
             print("  WARNING: these PDFs are SYNTHETIC test fixtures, not CME data -- levels are not real")
         print(f"  gold: {st['rows_parsed']} option rows parsed, {st['rows_book']} in book, "
-              f"OI {st['oi_total']:,.0f}, Black-76 vs bulletin delta median |diff| {st['delta_mad']:.3f}")
+              f"OI {st['oi_total']:,.0f}"
+              + (f" (02B {st['oi_02b']:,.0f})" if st.get("oi_02b") is not None else "")
+              + f", Black-76 vs bulletin delta median |diff| {st['delta_mad']:.4f}")
+        if st.get("weekly_miss") is not None:
+            print(f"  gold: Mon-Thu weekly rows placed by vol-surface fit; {st['weekly_miss_model']:,.0f} "
+                  f"contracts differed from 02B per-series OI, {st['weekly_miss']:,.0f} after balancing")
     except bulletin_gold.NoBulletinData as e:
         print(f"XAUUSD  skipped: {e}. Download Sections 62 and 64 from the CME Daily Bulletin "
               f"into {inbox} (see README.md).")
