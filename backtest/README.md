@@ -50,7 +50,9 @@ lot sized to lose 1% of balance at the stop. Compared with buy-only, sell-only a
 direction (5 seeds).
 - $5 stops lost in every mode: the spread is too large a share of the stop.
 - With $20 stops, H1/H4 trend trades earned +0.05 to +0.09R per trade (+97% to +127% over
-  16 months) with 36-52% max drawdown. Buy-only earned about the same; random direction lost.
+  16 months) with 36-52% max drawdown. Buy-only earned about the same. Random direction averaged
+  -44% to +20% depending on settings, but single seeds ranged from -72% to +188%: luck alone
+  produces results as large as the best trend results.
 - Split by side: buys in an H1/H4 uptrend earned +0.11 to +0.23R; sells in a downtrend earned
   about 0R. The filter helps by skipping buys in downtrends, not by selling.
 - Buy only when the H1/H4 trend is up (otherwise stay out), $20 stop: +118% to +153% with
@@ -65,5 +67,5 @@ python3 -m unittest -v test_backtest
 ```
 
 ## Limits
-M1 bars rather than ticks; the bot rules are reconstructed from the video; no swaps,
-commissions or slippage.
+M1 bars rather than ticks; the bot rules are reconstructed from the video; no commissions or
+slippage; swaps only where stated (the trend `swaps` runs).
