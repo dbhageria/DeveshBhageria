@@ -215,7 +215,15 @@ def _levels_for_pine(lv):
     for w in lv["walls"]:
         if w not in (lv["CW"], lv["PW"], lv["GW"]):
             add("wall", w, "color.new(color.silver, 30)", "line.style_solid", 1)
-    return out
+    # one line per price: levels on the same strike share it ("CW/GW 4100")
+    merged: dict = {}
+    for name, v, col, style, w in out:
+        key = round(v, 2)
+        if key in merged:
+            merged[key][0] += "/" + name
+        else:
+            merged[key] = [name, v, col, style, w]
+    return [tuple(m) for m in merged.values()]
 
 
 def pine_script(asset: str, lv: dict, generated: str) -> str:
@@ -267,7 +275,7 @@ if barstate.islast and (isGold or not onlyGold)
         p = array.get(lvPrice, i) * ratio
         array.push(gLines, line.new(bar_index - 1, p, bar_index, p, extend=extend.both, color=array.get(lvColor, i), style=array.get(lvStyle, i), width=array.get(lvWidth, i)))
         if showLabels
-            array.push(gLabels, label.new(bar_index + 4, p, array.get(lvName, i) + " " + str.tostring(p, format.mintick), style=label.style_label_left, color=color.new(color.black, 100), textcolor=array.get(lvColor, i), size=size.small))
+            array.push(gLabels, label.new(bar_index + 4, p, array.get(lvName, i) + " " + str.tostring(p, "#.0"), style=label.style_label_lower_left, color=color.new(color.black, 100), textcolor=array.get(lvColor, i), size=size.small))
     if showTable
         table.cell(info, 0, 0, "{info}", text_color=color.white, bgcolor=color.new(color.black, 30), text_size=size.small)
         table.cell(info, 0, 1, na(refClose) and convert and not isGC ? "ref " + refSym + " unavailable: set a manual ratio" : "ratio " + str.tostring(ratio, "#.#####"), text_color=color.silver, bgcolor=color.new(color.black, 30), text_size=size.small)
