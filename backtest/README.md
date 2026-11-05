@@ -33,8 +33,8 @@ without `flip_close` (close the basket as soon as the HTF trend turns against it
 - The wide-grid `swing` variant finished net-positive only in `htf_H4`, and only because one of its
   19 accounts reached the $1M cap (lottery variance, not edge). The other 4 swing modes lost money.
 - The HTF filter (H1/H4 EMA50, D1 EMA20) changed basket win rates by under 1%.
-- Closing the basket when the HTF trend flips changed almost nothing: 75-100% of deposits were
-  still lost in every non-swing run, and most flip-closes were at a loss (12-66% in profit).
+- Closing the basket when the HTF trend flips changed almost nothing: 84-100% of deposits were
+  still lost in every non-swing run, and 12-66% of flip-closes were in profit depending on the run.
 - Starting from $10 with `video_like` settings: about 61,000 accounts blown in 16 months; the best
   reached $18.5k and none reached $100k. With `moderate` settings, one $10 account reached $793k
   before blowing up.
