@@ -1,0 +1,84 @@
+Prepared 5,973,314 M1 bars in 17s; usable decision minutes 77.0%; fresh M1 no-wick signals 1,392,732
+
+=========== Specification defaults (strict votes, min 5, both sides, trail 1/1, all hours) ===========
+ votes  min side      exit session  stop_m5     n    win   avgR    PF  2011-18  2019-22  2023-26  consistent  growth  maxDD
+strict    5 both trail 1/1     all        5 19487 36.881 -0.320 0.510   -0.373   -0.314   -0.222       False   0.000  1.000
+
+=========== All 864 settings ===========
+Positive average R over 2011-2026: 109 / 864
+Positive in each of 2011-18, 2019-22, 2023-26: 13 / 864
+
+By dimension (share of settings with positive average R, median avg R):
+        pos  median_avgR  median_trades
+votes                                  
+color    5%       -0.121      +5835.000
+strict  20%       -0.082      +1655.500 
+
+     pos  median_avgR  median_trades
+min                                 
+5     3%       -0.163      +7156.000
+6     5%       -0.142      +4466.000
+7     6%       -0.083      +2200.500
+8    37%       -0.022       +666.000 
+
+       pos  median_avgR  median_trades
+side                                  
+both   16%       -0.095      +4467.000
+long   14%       -0.088      +3092.500
+short   8%       -0.133      +2888.500 
+
+             pos  median_avgR  median_trades
+exit                                        
+tp 1.5R       8%       -0.095      +3833.500
+tp 2R        12%       -0.100      +3202.000
+tp 3R        24%       -0.084      +2248.000
+trail 1/0.5   6%       -0.139      +5060.000
+trail 1/1    11%       -0.129      +4174.000
+trail 2/1    15%       -0.114      +3108.500 
+
+         pos  median_avgR  median_trades
+session                                 
+all       9%       -0.116      +3763.500
+ldn-ny   16%       -0.097      +3133.500 
+
+         pos  median_avgR  median_trades
+stop_m5                                 
+5         3%       -0.202      +6641.000
+12        8%       -0.111      +3819.000
+24       27%       -0.035      +2248.000 
+
+Top 15 by average R (at least 300 trades):
+ votes  min side      exit session  stop_m5    n    win    PF  avgR  2011-18  2019-22  2023-26  growth  maxDD
+strict    8 both   tp 1.5R     all       24  301 44.518 1.179 0.101    0.062    0.181    0.112   1.671  0.243
+strict    7 long     tp 3R  ldn-ny       24  580 27.759 1.138 0.101   -0.117    0.141    0.466   1.692  0.487
+strict    6 both     tp 3R  ldn-ny       24 1437 27.766 1.134 0.098    0.074    0.236    0.051   2.790  0.213
+strict    7 long     tp 3R     all       24  719 27.399 1.116 0.085   -0.153    0.177    0.391   1.586  0.561
+ color    7 both     tp 3R     all       24 2115 27.376 1.112 0.082    0.043    0.172    0.081   7.940  0.326
+strict    5 long     tp 3R  ldn-ny       24 1542 27.237 1.102 0.076    0.018    0.056    0.172   1.927  0.172
+strict    6 long     tp 3R  ldn-ny       24 1177 27.103 1.098 0.072   -0.023    0.176    0.131   1.967  0.181
+ color    7 both     tp 3R  ldn-ny       24 2091 26.829 1.081 0.060    0.046    0.127    0.034   4.465  0.429
+strict    6 both     tp 3R     all       24 1626 26.753 1.080 0.059    0.055    0.112    0.032   1.591  0.200
+ color    8 long trail 2/1  ldn-ny       24 1175 34.043 1.078 0.052   -0.054    0.081    0.193   1.887  0.755
+ color    8 long     tp 3R  ldn-ny       24 1050 26.667 1.068 0.051   -0.067    0.113    0.191   1.536  0.786
+strict    5 both     tp 3R  ldn-ny       24 1605 26.480 1.065 0.049    0.209   -0.051   -0.069   1.879  0.414
+strict    5 long     tp 3R     all       24 1713 26.445 1.059 0.044   -0.039    0.024    0.171   1.662  0.401
+ color    8 long     tp 3R     all       24 1292 26.393 1.051 0.038   -0.079    0.051    0.235   1.213  0.868
+ color    8 long trail 2/1     all       24 1484 34.232 1.056 0.038   -0.084    0.037    0.228   1.475  0.844
+
+Consistent settings (positive in all three periods), by average R:
+ votes  min  side      exit session  stop_m5    n    win    PF  avgR  2011-18  2019-22  2023-26  growth  maxDD
+strict    8  both   tp 1.5R  ldn-ny       24  219 47.032 1.304 0.164    0.147    0.272    0.124   1.910  0.186
+strict    8 short     tp 3R     all       24   99 29.293 1.225 0.161    0.194    0.043    0.170   1.290  0.180
+strict    8  both trail 2/1  ldn-ny       24  185 36.216 1.233 0.151    0.070    0.359    0.155   1.577  0.270
+strict    8  long trail 1/1  ldn-ny       24  117 51.282 1.277 0.134    0.171    0.308    0.001   1.301  0.151
+strict    8  both trail 2/1  ldn-ny       12  205 35.610 1.188 0.123    0.175    0.086    0.048   1.478  0.252
+strict    8  both   tp 1.5R     all       24  301 44.518 1.179 0.101    0.062    0.181    0.112   1.671  0.243
+strict    6  both     tp 3R  ldn-ny       24 1437 27.766 1.134 0.098    0.074    0.236    0.051   2.790  0.213
+ color    7  both     tp 3R     all       24 2115 27.376 1.112 0.082    0.043    0.172    0.081   7.940  0.326
+strict    8  both     tp 3R  ldn-ny       12  212 27.358 1.109 0.080    0.120    0.012    0.044   1.231  0.307
+strict    5  long     tp 3R  ldn-ny       24 1542 27.237 1.102 0.076    0.018    0.056    0.172   1.927  0.172
+strict    8  both     tp 2R  ldn-ny       12  226 36.283 1.115 0.074    0.104    0.058    0.025   1.275  0.250
+ color    7  both     tp 3R  ldn-ny       24 2091 26.829 1.081 0.060    0.046    0.127    0.034   4.465  0.429
+strict    6  both     tp 3R     all       24 1626 26.753 1.080 0.059    0.055    0.112    0.032   1.591  0.200
+
+Done in 104s

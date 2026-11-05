@@ -1,0 +1,34 @@
+; Strategy Tester preset for HeikenAshiConvictionEA.mq5
+; Same as the source defaults (candidate A from HA_RESEARCH.md) except that entries are enabled.
+; Original specification instead: InpMinVotes=5, InpStopM5Bars=5, InpUseTrailing=true, InpUseSession=false
+InpHAHistoryBars=200
+InpVoteMode=0
+InpMinVotes=8
+InpWickTolTicks=1
+InpMinBodyTicks=2
+InpAllowBuys=true
+InpAllowSells=true
+InpRisk5to6=0.5
+InpRisk7=1.0
+InpRisk8=2.0
+InpRiskHardCap=2.0
+InpLegs=5
+InpCostPerLot=10.0
+InpStopSlipPoints=20
+InpMaxMarginPct=25.0
+InpRequireFlatAccount=true
+InpStopM5Bars=24
+InpStopBuffer=0.10
+InpMaxSpread=1.00
+InpUseTrailing=false
+InpTrailActivateR=1.0
+InpTrailDistanceR=1.0
+InpTrailMinStepTicks=5
+InpFixedTP_R=1.5
+InpUseSession=true
+InpSessionStartHour=10
+InpSessionEndHour=23
+InpEnableAutoEntries=true
+InpMagic=26110511
+InpDeviationPoints=30
+InpShowPanel=false
