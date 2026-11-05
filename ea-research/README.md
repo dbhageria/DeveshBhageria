@@ -20,6 +20,11 @@ in some years, 2026 among them. Do not trade it live on this evidence.**
 The good 2026 result is real in Dukascopy's data too: PF 1.8–3.3 over 26–33 trades in 2026.
 But 2020, 2022 and 2025 lost money with the same rules, so it is a good year, not a lasting edge.
 
+**The best lead (section 3): sell-only.** Sell only when London drops more than $40, with a $40 stop
+and the trade held to the NY close (or a $120 target). It was profitable in all three periods
+(2011–18, 2019–22, 2023–26) under both scalings. Buy-only never was. It is still not statistically
+proven (CIs touch zero), so test it on a demo first. It is now the EA's default.
+
 ## 1. Tick-level backtest (most accurate test available here)
 
 **Data:** Dukascopy XAUUSD bid/ask ticks from `FX-Data/FX-Data-XAUUSD-DS`, 10 May 2011 – 19 Jun 2018:
@@ -152,7 +157,78 @@ fact, though, so they need fresh data before anyone relies on them:
 The honest way to test either one is a forward test on a demo account from today, with the rule
 fixed in advance. Optimising them further on this same history would just fit noise.
 
-## 3. First look: 6 months of 2026 (5-minute bars)
+## 3. Settings search: buy-only vs sell-only vs both
+
+`settings_search.py` tests 450 settings: direction (both / buy only / sell only) × London threshold
+(20–70) × SL (20–60 or none) × TP (30–120 or none), under both scalings, on 2011 – Oct 2026.
+A setting counts as **consistent** only if it made money in **each** of 2011–18, 2019–22 and
+2023–26. As a luck check, the same search was rerun with every trade reversed. That shows how
+many settings pass by chance.
+
+| | Price-scaled: consistent | Vol-scaled: consistent |
+|---|---|---|
+| Both directions | 0 / 150 | 18 / 150 (all need a London move > $70) |
+| **Buy only** | **0 / 150** | **0 / 150** |
+| **Sell only** | **33 / 150** | **14 / 150** |
+| Luck check (trades reversed), all 450 | 0 | 1 |
+
+**Consistent under both scalings:** all are sell-only, London drop > $40, SL $40 or $60:
+
+| Setting (sell only) | Price-scaled 2011–26 | Vol-scaled 2011–26 |
+|---|---|---|
+| London > $40, SL $40, **no TP (hold to NY close)** | 80 trades, PF 1.43, +0.19R | 232 trades, PF 1.32, +0.15R |
+| London > $40, SL $40, TP $120 | 80 trades, PF 1.56, +0.25R | 232 trades, PF 1.27, +0.13R |
+| London > $40, SL $60, no TP | 80 trades, PF 1.62, +0.20R | 232 trades, PF 1.29, +0.10R |
+
+**Caveats:**
+- The 95% CIs run from about −0.09 to −0.00R at the low end, so this is not yet statistically proven.
+- The 450 settings overlap heavily (the same days with different exits), so 33 passes is not 33
+  independent confirmations.
+- Price-scaled, it trades only about 5 times a year.
+
+It did pass the reversed-trade luck check (0–1 passes), and it held up through a 16-year gold
+uptrend, which works against shorts. Full output: `results/settings_search_output.txt`.
+
+## 4. 2026 trade lists for checking the EA in MT5
+
+`trade_list.py` applies the EA's exact rules to Dukascopy 1-minute bid/ask data:
+- **London move:** London 08:00 open to NY 08:00.
+- **Entry and exit:** entry at NY 08:00, exit by 16:55 NY = 23:55 server.
+- **Fills:** SL first if SL and TP fall in the same minute.
+
+It writes every trade with entry and exit times in New York and server time (GMT+2/+3 brokers = NY + 7 h).
+
+| File (2026, to 16 Oct) | Trades | Win % | PF | Total $/oz (= $ per 0.01 lot) | Max DD $/oz |
+|---|---|---|---|---|---|
+| `results/trades_2026_short_40_40_hold.csv`: EA default (sell only, > $40, SL $40, no TP, scaled) | 13 | 46% | 2.00 | +$214 | $105 |
+| `results/trades_2026_short_40_40_tp120.csv`: sell only, > $40, SL $40, TP $120, scaled | 13 | 54% | 2.71 | +$356 | $98 |
+| `results/trades_2026_original_30_40_60.csv`: original (both, > $30, SL $40, TP $60, not scaled) | 33 | 58% | 2.27 | +$459 | $182 |
+
+Most of the sell-only profit in 2026 came from three trades in March (+$241 to +$383/oz). The
+original settings had the better 2026, but over 16 years only the sell-only family was consistent.
+
+### How to test in MT5
+
+1. Copy `LondonNYContinuation.mq5` to `MQL5/Experts/`, compile it in MetaEditor (F7), and open the
+   Strategy Tester (Ctrl+R).
+2. Choose XAUUSD on **M5**, set Modelling to **"Every tick based on real ticks"**, and set the dates
+   to 2026.01.01 → today.
+3. Check your broker's server time. The defaults (London 10:00, NY 15:00, end 23:55) assume
+   GMT+2/+3, i.e. New York + 7 h. If yours differs, shift all three by the difference.
+4. Inputs:
+   - **EA default:** InpSide = Sell only, InpLondonMove = 40, InpStopLoss = 40, InpTakeProfit = 0,
+     InpScaleByPrice = true.
+   - **TP $120 variant:** the same with InpTakeProfit = 120.
+   - **Original:** InpSide = Both, InpLondonMove = 30, InpStopLoss = 40, InpTakeProfit = 60,
+     InpScaleByPrice = false.
+   - For a like-for-like check against the CSVs, set InpRiskPercent = 0 and InpFixedLots = 0.01. A
+     0.01 lot is 1 oz, so P/L in $ equals the `pnl_usd_per_oz` column.
+5. Compare the tester's trade list with the CSV. Dates and directions should match. Prices will
+   differ by your broker's spread and feed. A few trades can differ on days close to the threshold,
+   or in the 2–3 weeks a year when UK and US daylight-saving dates differ: there the EA's fixed server
+   hours sit one hour off true London time.
+
+## 5. First look: 6 months of 2026 (5-minute bars)
 
 XAUUSD 5-minute bars, 26 Mar – 25 Sep 2026, 129 days (`getdata-finance` free sample). London =
 08:00–13:00 London time, NY = 08:00–17:00 New York time. Signal day = |London move| > $30
@@ -183,6 +259,10 @@ The 2026 trade test with a $0.35 cost (SL counted first inside a 5m bar) gave SL
 
 ## Files
 
+- `settings_search.py`: the 450-setting buy/sell/both search (`python3 settings_search.py <repo>/xauusd`)
+- `trade_list.py`: per-trade list of what the EA does in a date range
+  (`python3 trade_list.py <repo>/xauusd out.csv --side short --london 40 --sl 40 --tp 0 --scale-price`)
+- `results/settings_search_output.txt`, `results/trades_2026_*.csv`: their output
 - `m1_backtest.py`: 2010–2026 backtest on Dukascopy 1m bid/ask, including the tick cross-check
   (`python3 m1_backtest.py <repo>/xauusd [TICKS_DIR]`)
 - `results/m1_backtest_output.txt`, `results/m1_direction_split.txt`: its output
@@ -190,8 +270,9 @@ The 2026 trade test with a $0.35 cost (SL counted first inside a 5m bar) gave SL
 - `prepare_ticks.py`: converts one year of FX-Data Dukascopy ticks (`python3 prepare_ticks.py 2015 WORK OUT`)
 - `results/tick_backtest_output.txt`: full output of the tick backtest
 - `london_ny_study.py`: the first-look 2026 study (`python3 london_ny_study.py XAUUSD_5m.csv`)
-- `LondonNYContinuation.mq5`: MT5 Expert Advisor (London > $30, SL $40, TP $60, 0.5% risk, one trade per
-  day; session times in server time, defaults for GMT+2/+3 brokers). Kept for testing in MT5;
-  the evidence above says it should not be run live. Not compiled here.
+- `LondonNYContinuation.mq5`: MT5 Expert Advisor v1.10. Defaults: sell only, London drop > $40, SL $40,
+  no TP (hold to NY close), levels scaled by price, 0.5% risk, one trade per day. Session times are
+  in server time, with defaults for GMT+2/+3 brokers. Set InpSide = Both, 30 / 40 / 60 and
+  InpScaleByPrice = false for the original setting. Not compiled here; compile in MetaEditor.
 
 *Research only, not financial advice. Past results do not guarantee future results.*

@@ -2,7 +2,12 @@
 //| LondonNYContinuation.mq5                                         |
 //| XAUUSD: if London's net move exceeds a threshold, enter at the   |
 //| NY open in London's direction with fixed $ SL/TP, flat by NY     |
-//| close. One trade per day.                                        |
+//| close. One trade per day. Can be limited to longs or shorts.     |
+//|                                                                  |
+//| Defaults are the setting that was profitable in every period of  |
+//| the 2011-2026 research: SHORT only, London drop > $40, SL $40,   |
+//| no TP (hold to NY close), levels scaled by price ($4,450 = 1x).  |
+//| Original setting: Both, 30, 40, 60, InpScaleByPrice = false.     |
 //|                                                                  |
 //| Session times are BROKER SERVER time. Defaults assume the usual  |
 //| GMT+2 (winter) / GMT+3 (summer) gold broker, where:              |
@@ -12,9 +17,16 @@
 //| Check your broker's server offset and adjust if different.       |
 //+------------------------------------------------------------------+
 #property copyright "EA research - London/NY continuation"
-#property version   "1.00"
+#property version   "1.10"
 
 #include <Trade/Trade.mqh>
+
+enum ETradeSide
+{
+   SIDE_BOTH  = 0, // Both (buy and sell)
+   SIDE_LONG  = 1, // Buy only
+   SIDE_SHORT = 2  // Sell only
+};
 
 input group "Sessions (broker server time, HH:MM)"
 input string InpLondonStart   = "10:00"; // London session start
@@ -23,15 +35,18 @@ input string InpNYEnd         = "23:55"; // NY session end (force close)
 input int    InpEntryWindow   = 30;      // Minutes after NY start in which entry is allowed
 
 input group "Signal"
-input double InpLondonMove    = 30.0;    // Minimum London net move ($)
+input ETradeSide InpSide      = SIDE_SHORT; // Directions to trade
+input double InpLondonMove    = 40.0;    // Minimum London net move ($)
 input double InpMaxLondonMove = 0.0;     // Skip if London move is larger ($, 0 = off)
+input bool   InpScaleByPrice  = true;    // Scale all $ levels by London open / reference price
+input double InpRefPrice      = 4450.0;  // Reference gold price for scaling
 
 input group "Trade"
-input double InpStopLoss      = 40.0;    // Stop loss distance ($)
-input double InpTakeProfit    = 60.0;    // Take profit distance ($)
+input double InpStopLoss      = 40.0;    // Stop loss distance ($, 0 = none: uses fixed lots)
+input double InpTakeProfit    = 0.0;     // Take profit distance ($, 0 = none: hold to NY end)
 input double InpRiskPercent   = 0.5;     // Risk per trade, % of equity (0 = fixed lots)
 input double InpFixedLots     = 0.01;    // Fixed lots when risk % is 0
-input double InpMaxSpread     = 0.60;    // Max spread allowed at entry ($)
+input double InpMaxSpread     = 1.00;    // Max spread allowed at entry ($); 2026 NY-open spreads are ~$0.3-0.6
 input ulong  InpMagic         = 260530;  // Magic number
 
 CTrade trade;
@@ -41,9 +56,9 @@ int OnInit()
 {
    trade.SetExpertMagicNumber(InpMagic);
    trade.SetDeviationInPoints(50);
-   if(InpStopLoss <= 0 || InpTakeProfit <= 0 || InpLondonMove <= 0)
+   if(InpStopLoss < 0 || InpTakeProfit < 0 || InpLondonMove <= 0 || InpRefPrice <= 0)
    {
-      Print("SL, TP and London move must be positive");
+      Print("London move and reference price must be positive; SL and TP must be >= 0");
       return INIT_PARAMETERS_INCORRECT;
    }
    if(At(0, InpLondonStart) >= At(0, InpNYStart) || At(0, InpNYStart) >= At(0, InpNYEnd))
@@ -129,7 +144,7 @@ double NormalizeLots(double lots)
 
 double LotsForRisk(double slDistance)
 {
-   if(InpRiskPercent <= 0)
+   if(InpRiskPercent <= 0 || slDistance <= 0)
       return NormalizeLots(InpFixedLots);
    double tickValue = SymbolInfoDouble(_Symbol, SYMBOL_TRADE_TICK_VALUE_LOSS);
    double tickSize  = SymbolInfoDouble(_Symbol, SYMBOL_TRADE_TICK_SIZE);
@@ -160,12 +175,17 @@ void OnTick()
    int n = CopyRates(_Symbol, PERIOD_M5, lonT, nyT - 1, r);
    if(n < 20)
       return;   // not enough London data (holiday or history still loading)
-   double move = r[n - 1].close - r[0].open;
+   double move  = r[n - 1].close - r[0].open;
+   double scale = InpScaleByPrice ? r[0].open / InpRefPrice : 1.0;
 
-   if(MathAbs(move) <= InpLondonMove)
+   if(MathAbs(move) <= InpLondonMove * scale)
       return;
-   if(InpMaxLondonMove > 0 && MathAbs(move) > InpMaxLondonMove)
+   if(InpMaxLondonMove > 0 && MathAbs(move) > InpMaxLondonMove * scale)
       return;
+   if((InpSide == SIDE_LONG && move < 0) || (InpSide == SIDE_SHORT && move > 0))
+      return;
+   double slDist = InpStopLoss * scale;
+   double tpDist = InpTakeProfit * scale;
 
    MqlTick tick;
    if(!SymbolInfoTick(_Symbol, tick))
@@ -173,20 +193,21 @@ void OnTick()
    if(tick.ask - tick.bid > InpMaxSpread)
       return;   // retry on later ticks inside the entry window
 
-   double lots = LotsForRisk(InpStopLoss);
+   double lots = LotsForRisk(slDist);
    if(lots <= 0)
       return;
 
+   // 0 = no stop / no target
    if(move > 0)
    {
-      double sl = NormalizeDouble(tick.ask - InpStopLoss, _Digits);
-      double tp = NormalizeDouble(tick.ask + InpTakeProfit, _Digits);
+      double sl = slDist > 0 ? NormalizeDouble(tick.ask - slDist, _Digits) : 0.0;
+      double tp = tpDist > 0 ? NormalizeDouble(tick.ask + tpDist, _Digits) : 0.0;
       trade.Buy(lots, _Symbol, tick.ask, sl, tp, StringFormat("LDN +%.1f", move));
    }
    else
    {
-      double sl = NormalizeDouble(tick.bid + InpStopLoss, _Digits);
-      double tp = NormalizeDouble(tick.bid - InpTakeProfit, _Digits);
+      double sl = slDist > 0 ? NormalizeDouble(tick.bid + slDist, _Digits) : 0.0;
+      double tp = tpDist > 0 ? NormalizeDouble(tick.bid - tpDist, _Digits) : 0.0;
       trade.Sell(lots, _Symbol, tick.bid, sl, tp, StringFormat("LDN %.1f", move));
    }
 }

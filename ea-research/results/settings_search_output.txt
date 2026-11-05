@@ -1,0 +1,58 @@
+4199 NY sessions, 2010-01-28 -> 2026-10-16; grid of 450 settings, >= 15 trades per period required
+
+################ SCALING BY PRICE ################
+Settings positive in all three periods: follow London 33, fade London (luck baseline) 0
+  both :  0 of 150 consistent; positive over 2011-2026: 89 of 150
+  long :  0 of 150 consistent; positive over 2011-2026: 29 of 150
+  short: 33 of 150 consistent; positive over 2011-2026: 124 of 150
+
+Consistent settings, following London (best average R first):
+ side  thr   sl   tp   n     PF   avgR  ci_lo  ci_hi  R 2011-18  R 2019-22  R 2023-26  n 2011-18  n 2019-22  n 2023-26
+short   40   30  120  80 +1.510 +0.291 -0.091 +0.688     +0.424     +0.077     +0.309         30         21         29
+short   40   40  120  80 +1.558 +0.246 -0.047 +0.554     +0.269     +0.145     +0.296         30         21         29
+short   40   60  120  80 +1.679 +0.220 -0.001 +0.448     +0.236     +0.003     +0.362         30         21         29
+short   30   30  120 169 +1.428 +0.217 -0.014 +0.465     +0.219     +0.179     +0.255         81         46         42
+short   40   30 none  80 +1.379 +0.216 -0.147 +0.599     +0.339     +0.099     +0.174         30         21         29
+short   30   40  120 169 +1.539 +0.204 +0.022 +0.394     +0.180     +0.195     +0.261         81         46         42
+short   30 none  120 169 +1.461 +0.203 -0.015 +0.420     +0.165     +0.061     +0.432         81         46         42
+short   40   60 none  80 +1.623 +0.202 -0.024 +0.434     +0.231     +0.014     +0.308         30         21         29
+short   40   40 none  80 +1.431 +0.190 -0.090 +0.488     +0.205     +0.161     +0.195         30         21         29
+short   30 none none 169 +1.416 +0.184 -0.033 +0.402     +0.160     +0.053     +0.373         81         46         42
+short   30   30 none 169 +1.341 +0.173 -0.050 +0.416     +0.184     +0.168     +0.157         81         46         42
+short   30   40 none 169 +1.452 +0.171 -0.005 +0.356     +0.154     +0.187     +0.188         81         46         42
+
+Consistent settings, fading London (luck baseline):
+  (none)
+
+################ SCALING BY VOL ################
+Settings positive in all three periods: follow London 32, fade London (luck baseline) 1
+  both : 18 of 150 consistent; positive over 2011-2026: 39 of 150
+  long :  0 of 150 consistent; positive over 2011-2026: 15 of 150
+  short: 14 of 150 consistent; positive over 2011-2026: 77 of 150
+
+Consistent settings, following London (best average R first):
+ side  thr   sl   tp   n     PF   avgR  ci_lo  ci_hi  R 2011-18  R 2019-22  R 2023-26  n 2011-18  n 2019-22  n 2023-26
+ both   70   20 none  74 +1.774 +0.627 -0.094 +1.442     +0.512     +0.288     +1.118         38         16         20
+ both   70   30 none  74 +1.654 +0.436 -0.088 +1.009     +0.381     +0.260     +0.682         38         16         20
+ both   70   40 none  74 +1.810 +0.412 -0.005 +0.853     +0.335     +0.295     +0.652         38         16         20
+ both   70   20  120  74 +1.452 +0.366 -0.212 +0.992     +0.137     +0.182     +0.949         38         16         20
+ both   70 none none  74 +1.490 +0.346 -0.166 +0.878     +0.303     +0.127     +0.601         38         16         20
+ both   70   40  120  74 +1.668 +0.340 -0.020 +0.719     +0.271     +0.232     +0.556         38         16         20
+ both   70   20   80  74 +1.444 +0.332 -0.147 +0.850     +0.068     +0.120     +1.004         38         16         20
+ both   70   30  120  74 +1.478 +0.319 -0.124 +0.790     +0.247     +0.176     +0.569         38         16         20
+ both   70   30   80  74 +1.448 +0.277 -0.096 +0.666     +0.136     +0.052     +0.726         38         16         20
+ both   70   40   80  74 +1.561 +0.269 -0.032 +0.582     +0.128     +0.139     +0.641         38         16         20
+ both   70 none  120  74 +1.351 +0.248 -0.204 +0.706     +0.138     +0.064     +0.602         38         16         20
+short   50 none none 128 +1.432 +0.242 -0.092 +0.574     +0.098     +0.424     +0.277         58         40         30
+
+Consistent settings, fading London (luck baseline):
+ side  thr sl tp   n     PF   avgR  ci_lo  ci_hi  R 2011-18  R 2019-22  R 2023-26  n 2011-18  n 2019-22  n 2023-26
+short   50 20 45 122 +1.169 +0.114 -0.168 +0.401     +0.086     +0.035     +0.260         64         30         28
+
+################ CONSISTENT UNDER BOTH SCALINGS ################
+ side  thr sl   tp  n_p   PF_p  avgR_p  ci_lo_p  n_v   PF_v  avgR_v  ci_lo_v   minR
+short   40 40 none   80 +1.431  +0.190   -0.090  232 +1.315  +0.154   -0.031 +0.089
+short   40 40  120   80 +1.558  +0.246   -0.047  232 +1.266  +0.130   -0.042 +0.049
+short   40 60 none   80 +1.623  +0.202   -0.024  232 +1.293  +0.101   -0.029 +0.014
+short   40 40   80   80 +1.378  +0.167   -0.091  232 +1.165  +0.080   -0.073 +0.011
+short   40 60  120   80 +1.679  +0.220   -0.001  232 +1.263  +0.090   -0.033 +0.003
