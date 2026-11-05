@@ -26,6 +26,9 @@ without `flip_close` (close the basket as soon as the HTF trend turns against it
 | `r_s0_1000.jsonl` | $0 | $1,000 |
 | `r_swing.jsonl` | $0.30 | $10,000 (wide-grid variant) |
 | `r_flip.jsonl` | $0.30 | $1,000 ($10,000 for swing); HTF modes, flip-close off vs on |
+| `r_trend.jsonl` | $0.30 | $10,000; no-averaging trend strategy, 1% risk, all modes |
+| `r_trend_swaps.jsonl` | $0.30 | $10,000; same, $20 stop, with overnight swaps |
+| `r_trend_longonly.jsonl` | $0.30 | $10,000; buy-only-in-uptrend, full period and each half |
 
 ## Findings
 - All main-grid runs (`video_like` / `moderate` / `conservative`) lost money overall, including at
@@ -40,6 +43,21 @@ without `flip_close` (close the basket as soon as the HTF trend turns against it
   before blowing up.
 - Accounts that reach $1M are stopped there and counted as cashed out (the cap). Each result's
   `top_accounts` field lists its 3 best accounts with start, peak and end times.
+
+## No-averaging trend strategy (`trend_backtest.py`, `trend_longonly_check.py`)
+One trade at a time in the HTF direction, fixed $5/$10/$20 stop, take-profit at 1-3x the stop,
+lot sized to lose 1% of balance at the stop. Compared with buy-only, sell-only and random
+direction (5 seeds).
+- $5 stops lost in every mode: the spread is too large a share of the stop.
+- With $20 stops, H1/H4 trend trades earned +0.05 to +0.09R per trade (+97% to +127% over
+  16 months) with 36-52% max drawdown. Buy-only earned about the same; random direction lost.
+- Split by side: buys in an H1/H4 uptrend earned +0.11 to +0.23R; sells in a downtrend earned
+  about 0R. The filter helps by skipping buys in downtrends, not by selling.
+- Buy only when the H1/H4 trend is up (otherwise stay out), $20 stop: +118% to +153% with
+  26-30% max drawdown (+89% to +116% with swaps). It beat plain buying in Sep 2025-May 2026
+  but not clearly in Jan-Aug 2025.
+- Gold rose 31% in each half of the test, so none of this shows how it does in a falling or
+  sideways market.
 
 ## Tests
 ```bash

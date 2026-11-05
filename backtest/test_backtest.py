@@ -64,5 +64,24 @@ class BacktestTests(unittest.TestCase):
         self.assertEqual(res_off["flip_closes"], 0)
 
 
+class TrendBacktestTests(unittest.TestCase):
+    def test_take_profit_is_rr_times_risk(self):
+        import trend_backtest as tb
+        # $10 stop, 2R target, 1% risk on $10k -> 0.1 lots; price rises $25 -> +2R = +$200
+        df = bars([(2000, 2000, 2000, 2000), (2000, 2025, 2000, 2025)])
+        res = tb.run(df, np.ones(2), "buy", sl=10.0, rr=2.0)
+        self.assertEqual(res["trades"], 1)  # re-entry would be on the next bar; there is none
+        self.assertAlmostEqual(res["avg_R"], 2.0, places=4)
+        self.assertAlmostEqual(res["final_balance"], 10_200.0, places=2)
+
+    def test_stop_loss_loses_one_percent(self):
+        import trend_backtest as tb
+        # price falls $15: the $10 stop is hit -> -1R = -$100
+        df = bars([(2000, 2000, 2000, 2000), (2000, 2000, 1985, 1985)])
+        res = tb.run(df, np.ones(2), "buy", sl=10.0, rr=2.0)
+        self.assertAlmostEqual(res["avg_R"], -1.0, places=4)
+        self.assertAlmostEqual(res["final_balance"], 9_900.0, places=2)
+
+
 if __name__ == "__main__":
     unittest.main()
