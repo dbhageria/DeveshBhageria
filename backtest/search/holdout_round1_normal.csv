@@ -1,0 +1,2 @@
+family,combo,dev_pf,n,filt,side,stop_mult,rr,trail_mult,max_bars,trades,pf,avg_r,win_rate,ret_pct,max_dd_pct,years_pos,years,long_avg_r,short_avg_r
+donchian_breakout,2-1-0-1-0-2-0,1.364,192,D1,both,3.0,0.0,5.0,0,117,1.972,0.5018,41.0,75.8,10.1,2,2,0.5214,0.3679
